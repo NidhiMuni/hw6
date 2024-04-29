@@ -6,10 +6,30 @@
 #include <string>
 #include <sstream>
 #include <functional>
+#include <set>
 using namespace std;
 int main()
 {
-    DoubleHashProber<std::string, MyStringHash > dh;
+  HashTable<string, int, DoubleHashProber<string, std::hash<string>>, hash<string>, equal_to<string> > ht;
+    set<pair<string, int>> items;
+    for(int i = 0; i < 10; i++) {
+        pair<string, int> newItem(to_string(i), i);
+        ht.insert(newItem);
+        items.insert(newItem);
+        ht.remove(to_string(i));
+        ht.remove("6");
+        cout << "size: " << ht.size() << endl;
+        cout << "chchchch " << (ht.find(to_string(i)) == nullptr) << endl;
+    }
+    //add another item should resize
+    pair<string,int> newItem(to_string(11),11);
+    ht.insert(newItem);
+    items.insert(newItem);
+    //check that all the items are still there
+    cout << "size: " << ht.size() << endl;
+
+
+    /*DoubleHashProber<std::string, MyStringHash > dh;
     HashTable<
         std::string, 
         int, 
@@ -43,6 +63,6 @@ int main()
         cout << "Did not find hi9" << endl;
     }
     ht.insert({"hi7",17});
-    cout << "size: " << ht.size() << endl;
+    cout << "size: " << ht.size() << endl;*/
     return 0;
 }
