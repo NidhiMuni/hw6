@@ -304,7 +304,7 @@ HashTable<K,V,Prober,Hash,KEqual>::HashTable(
     allSize_ = 0;
 
     mIndex_ = 0;
-    for (int i = 0; i < CAPACITIES[mIndex_]; i++){
+    for (int i = 0; i < (int)CAPACITIES[mIndex_]; i++){
       table_.push_back(nullptr);
     }
     resizeAlpha_ = resizeAlpha;
@@ -315,6 +315,9 @@ HashTable<K,V,Prober,Hash,KEqual>::HashTable(
 template<typename K, typename V, typename Prober, typename Hash, typename KEqual>
 HashTable<K,V,Prober,Hash,KEqual>::~HashTable()
 {
+  for (int i = 0; i < (int)CAPACITIES[mIndex_]; i++){
+    delete table_[i];
+  }
 
 }
 
@@ -343,12 +346,11 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
   }
   
 
-  if (this->allSize_ >= CAPACITIES[mIndex_]){
+  if (this->allSize_ >= (size_t)CAPACITIES[mIndex_]){
     throw std::logic_error("Nowhere to insert"); 
   }
 
   HASH_INDEX_T h = hash_(p.first);
-  HashItem* x = new HashItem(p);
 
   prober_.init(h, CAPACITIES[mIndex_], p.first);
 
@@ -359,9 +361,9 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
   }
 
   if (table_[result] == nullptr){
-      table_[result] = new HashItem(p);
-      size_++;
-      allSize_++;
+    table_[result] = new HashItem(p);
+    size_++;
+    allSize_++;
 
     //if it is a duplicate
   } else if (table_[result]->item.first == p.first ) {
@@ -477,7 +479,7 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
   //create new table, must be copied to main later
   std::vector<HashItem*> newTable(CAPACITIES[mIndex_ + 1], nullptr);
 
-  for (int i = 0; i < CAPACITIES[mIndex_]; i++){
+  for (int i = 0; i < (int)CAPACITIES[mIndex_]; i++){
     HashItem* element = table_[i];
     if (element != nullptr && element->deleted == false){
       HASH_INDEX_T newHash = hash_(element->item.first);
@@ -492,6 +494,10 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
         } else {
           result = tempProber.next();
         }
+      }
+    } else {
+      if (element != nullptr){
+        delete element;
       }
     }
   }
