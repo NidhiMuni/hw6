@@ -94,6 +94,45 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board, 
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
-//add your solution here!
+	//if nowhere to go
+	if (r >= board.size() || c >= board[0].size()){
+		std::set<std::string>::iterator wordFinder;
+  	wordFinder=dict.find(word);
+
+		//if it is a word, add it, and if not, nothing
+		if (wordFinder != dict.end()){
+			result.insert(word);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	std::string nextWord = word + board[r][c];
+
+	std::set<std::string>::iterator prefixFinder;
+  prefixFinder=prefix.find(nextWord);
+
+	std::set<std::string>::iterator dictFinder;
+  dictFinder=dict.find(nextWord);
+
+	bool isPrefix = (prefixFinder != prefix.end());
+	bool isWord = (dictFinder != dict.end());
+
+	if (isPrefix && isWord){
+
+		bool biggerFound = boggleHelper(dict, prefix, board, nextWord, result, (r + dr), (c + dc), dr, dc);
+		//the bigger word was not found, just add this one
+		if (biggerFound == false){
+			result.insert(nextWord);
+		} 
+		return true;
+	} else if (isPrefix && !isWord){
+		return boggleHelper(dict, prefix, board, nextWord, result, (r + dr), (c + dc), dr, dc);
+	} else if (isWord && !isPrefix){
+		result.insert(nextWord);
+		return true;
+	} else {
+		return false;
+	}
 
 }
