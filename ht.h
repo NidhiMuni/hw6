@@ -370,38 +370,7 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
         table_[result]->deleted = false;
       }
       table_[result]->item.second = p.second;
-    //if not available
   }
-
-  /*
-
-  while(result != Prober::npos){
-    //if it is empty 
-    if (table_[result] == nullptr){
-      std::cout << "orig " << std::endl;
-      table_[result] = new HashItem(p);
-      size_++;
-      allSize_++;
-      break;
-
-    //if it is a duplicate
-    } else if (table_[result]->item.first == p.first ) {
-      if (table_[result]->deleted == true){
-        size_++;
-        table_[result]->deleted = false;
-      }
-      std::cout << "dupe " << std::endl;
-      table_[result]->item.second = p.second;
-      break;
-    //if not available
-    } else {
-      result = prober_.next();
-    }
-  }
-
-  /*if (result == Prober::npos){
-    throw std::logic_error("Nowhere to insert");
-  }*/
 
 }
 
@@ -505,16 +474,6 @@ typename HashTable<K,V,Prober,Hash,KEqual>::HashItem* HashTable<K,V,Prober,Hash,
 template<typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K,V,Prober,Hash,KEqual>::resize()
 {
-
-
-  /*for (int i = 0; i <table_.size(); i++){
-    if (table_[i] != nullptr){
-      std::cout << " " << table_[i]->item.first << " " ;
-    } else {
-      std::cout << " nul " ;
-    }
-  }
-  std::cout << std::endl;*/
   //create new table, must be copied to main later
   std::vector<HashItem*> newTable(CAPACITIES[mIndex_ + 1], nullptr);
 
